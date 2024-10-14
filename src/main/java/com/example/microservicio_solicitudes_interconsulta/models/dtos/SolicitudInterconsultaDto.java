@@ -14,8 +14,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class SolicitudInterconsultaDto {
     private Integer id;
-    private Integer idHistoriaClinica;
-    private Integer idMedico;
     private String hospitalInterconsultado;
     private String unidadInterconsultada;
     private String queDeseaSaber;
@@ -24,20 +22,37 @@ public class SolicitudInterconsultaDto {
     private Date createdAt;
     private Date updatedAt;
     private Date deletedAt;
+    private Integer idHistoriaClinica;
+    private String diagnosticoPresuntivo;
+    private Integer idEspecialidad;
+    private String nombreEspecialidad;
+    private Integer idMedico;
+    private String nombreMedico;
+    private Integer idPaciente;
+    private String pacientePropietario;
+    private String ciPropietario;
+
 
     public SolicitudInterconsultaDto convertirSolicitudInterconsultaEntityASolicitudInterconsultaDto(SolicitudInterconsultaEntity solicitudInterconsultaEntity) {
         SolicitudInterconsultaDto solicitudInterconsultaDto = new SolicitudInterconsultaDto();
-        solicitudInterconsultaDto.id = solicitudInterconsultaEntity.getIdSolicitudInterconsulta();
-        solicitudInterconsultaDto.idHistoriaClinica = solicitudInterconsultaEntity.getHistoriaClinica().getIdHistoriaClinica();
-        solicitudInterconsultaDto.idMedico = solicitudInterconsultaEntity.getMedico().getIdUsuario();
-        solicitudInterconsultaDto.hospitalInterconsultado = solicitudInterconsultaEntity.getHospitalInterconsultado();
-        solicitudInterconsultaDto.unidadInterconsultada = solicitudInterconsultaEntity.getUnidadInterconsultada();
-        solicitudInterconsultaDto.queDeseaSaber = solicitudInterconsultaEntity.getQueDeseaSaber();
-        solicitudInterconsultaDto.sintomatologia = solicitudInterconsultaEntity.getSintomatologia();
-        solicitudInterconsultaDto.tratamiento = solicitudInterconsultaEntity.getTratamiento();
-        solicitudInterconsultaDto.createdAt = solicitudInterconsultaEntity.getCreatedAt();
-        solicitudInterconsultaDto.updatedAt = solicitudInterconsultaEntity.getUpdatedAt();
-        solicitudInterconsultaDto.deletedAt = solicitudInterconsultaEntity.getDeletedAt();
+        solicitudInterconsultaDto.setId(solicitudInterconsultaEntity.getIdSolicitudInterconsulta());
+        solicitudInterconsultaDto.setHospitalInterconsultado(solicitudInterconsultaEntity.getHospitalInterconsultado());
+        solicitudInterconsultaDto.setUnidadInterconsultada(solicitudInterconsultaEntity.getUnidadInterconsultada());
+        solicitudInterconsultaDto.setQueDeseaSaber(solicitudInterconsultaEntity.getQueDeseaSaber());
+        solicitudInterconsultaDto.setSintomatologia(solicitudInterconsultaEntity.getSintomatologia());
+        solicitudInterconsultaDto.setTratamiento(solicitudInterconsultaEntity.getTratamiento());
+        solicitudInterconsultaDto.setCreatedAt(solicitudInterconsultaEntity.getCreatedAt());
+        solicitudInterconsultaDto.setUpdatedAt(solicitudInterconsultaEntity.getUpdatedAt());
+        solicitudInterconsultaDto.setDeletedAt(solicitudInterconsultaEntity.getDeletedAt());
+        solicitudInterconsultaDto.setIdHistoriaClinica(solicitudInterconsultaEntity.getHistoriaClinica().getIdHistoriaClinica());
+        solicitudInterconsultaDto.setDiagnosticoPresuntivo(solicitudInterconsultaEntity.getHistoriaClinica().getDiagnosticoPresuntivo());
+        solicitudInterconsultaDto.setIdEspecialidad(solicitudInterconsultaEntity.getHistoriaClinica().getEspecialidad().getIdEspecialidad());
+        solicitudInterconsultaDto.setNombreEspecialidad(solicitudInterconsultaEntity.getHistoriaClinica().getEspecialidad().getNombre());
+        solicitudInterconsultaDto.setIdMedico(solicitudInterconsultaEntity.getMedico().getIdUsuario());
+        solicitudInterconsultaDto.setNombreMedico(solicitudInterconsultaEntity.getMedico().getNombres()+" "+solicitudInterconsultaEntity.getMedico().getApellidoPaterno()+" "+solicitudInterconsultaEntity.getMedico().getApellidoMaterno());
+        solicitudInterconsultaDto.setIdPaciente(solicitudInterconsultaEntity.getHistoriaClinica().getPaciente().getIdUsuario());
+        solicitudInterconsultaDto.setPacientePropietario(solicitudInterconsultaEntity.getHistoriaClinica().getPaciente().getNombres()+" "+solicitudInterconsultaEntity.getHistoriaClinica().getPaciente().getApellidoPaterno()+" "+solicitudInterconsultaEntity.getHistoriaClinica().getPaciente().getApellidoMaterno());
+        solicitudInterconsultaDto.setCiPropietario(solicitudInterconsultaEntity.getHistoriaClinica().getPaciente().getCi());
         return solicitudInterconsultaDto;
     }
 }
