@@ -1,8 +1,12 @@
 package com.example.microservicio_solicitudes_interconsulta.controllers;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -20,7 +24,6 @@ import com.example.microservicio_solicitudes_interconsulta.services.ContainerMet
 import com.example.microservicio_solicitudes_interconsulta.services.SolicitudesInterconsultaService;
 
 @RestController
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping(path = "/solicitudes-interconsulta")
 public class SolicitudInterconsultaController {
     @Autowired
@@ -80,5 +83,21 @@ public class SolicitudInterconsultaController {
     @GetMapping("/info-container")
     public @ResponseBody String obtenerInformacionContenedor() {
         return "microservicio historias clinicas: " + containerMetadataService.retrieveContainerMetadataInfo();
+    }
+    @GetMapping("/pdf")
+    public ResponseEntity<byte[]> obtenerPDFSolicitudInterconsulta(SolicitudInterconsultaDto solicitudInterconsultaDto) {
+        try {
+            byte[] pdfBytes = solicitudesInterconsultaService.obtenerPDFSolicitudInterconsulta(solicitudInterconsultaDto);
+            
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Disposition", "inline; filename=SolicitudInterconsulta.pdf");
+            headers.add("Content-Type", "application/pdf");
+            headers.add("Content-Length", "" + pdfBytes.length);
+
+            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>( HttpStatus.NOT_FOUND);
+        }
     }
 }

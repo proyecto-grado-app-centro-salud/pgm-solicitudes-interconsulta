@@ -25,6 +25,8 @@ public class SolicitudesInterconsultaService {
     @Autowired
     private UsuariosRepositoryJPA usuariosRepositoryJPA;
 
+    @Autowired
+    PDFService pdfService;
     public SolicitudInterconsultaDto registrarSolicitud(SolicitudInterconsultaDto solicitudDto) {
         UsuarioEntity medicoEntity = usuariosRepositoryJPA.findById(solicitudDto.getIdMedico())
             .orElseThrow(() -> new RuntimeException("Médico no encontrado"));
@@ -83,5 +85,14 @@ public class SolicitudesInterconsultaService {
         return solicitudes.stream()
                         .map(solicitud -> new SolicitudInterconsultaDto().convertirSolicitudInterconsultaEntityASolicitudInterconsultaDto(solicitud))
                         .toList();
+    }
+
+    public byte[] obtenerPDFSolicitudInterconsulta(SolicitudInterconsultaDto solicitudInterconsultaDto) {
+        try {
+            return pdfService.generarPdfReporteSolicitudInterconsulta(solicitudInterconsultaDto);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error al generar el PDF de la historia clinica.", e);
+        }
     }
 }
