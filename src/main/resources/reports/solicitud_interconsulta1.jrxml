@@ -123,7 +123,7 @@
 				<pen lineWidth="2.0"/>
 			</element>
 		</band>
-		<band height="290" splitType="Stretch">
+		<band height="315" splitType="Stretch">
 			<element kind="staticText" uuid="69807dce-685d-4085-9557-6c1505a09f10" stretchType="ElementGroupHeight" x="0" y="0" width="515" height="30" fontSize="12.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
 				<text><![CDATA[SOLICITUD INTERCONSULTA]]></text>
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>

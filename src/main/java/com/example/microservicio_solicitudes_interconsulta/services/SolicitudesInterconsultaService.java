@@ -1,8 +1,13 @@
 package com.example.microservicio_solicitudes_interconsulta.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.example.microservicio_solicitudes_interconsulta.models.HistoriaClinicaEntity;
@@ -12,6 +17,7 @@ import com.example.microservicio_solicitudes_interconsulta.models.dtos.Solicitud
 import com.example.microservicio_solicitudes_interconsulta.repositories.HistoriaClinicaRepositoryJPA;
 import com.example.microservicio_solicitudes_interconsulta.repositories.SolicitudesInterconsultaRepositoryJPA;
 import com.example.microservicio_solicitudes_interconsulta.repositories.UsuariosRepositoryJPA;
+import com.example.microservicio_solicitudes_interconsulta.util.SolicitudesInterconsultaSpecification;
 
 @Service
 public class SolicitudesInterconsultaService {
@@ -27,6 +33,10 @@ public class SolicitudesInterconsultaService {
 
     @Autowired
     PDFService pdfService;
+
+
+    @Autowired
+    private ConvertirTiposDatosService convertirTiposDatosService;
     public SolicitudInterconsultaDto registrarSolicitud(SolicitudInterconsultaDto solicitudDto) {
         UsuarioEntity medicoEntity = usuariosRepositoryJPA.findById(solicitudDto.getIdMedico())
             .orElseThrow(() -> new RuntimeException("Médico no encontrado"));
@@ -46,21 +56,25 @@ public class SolicitudesInterconsultaService {
         return new SolicitudInterconsultaDto().convertirSolicitudInterconsultaEntityASolicitudInterconsultaDto(solicitudEntity);
     }
 
-    public List<SolicitudInterconsultaDto> obtenerTodasSolicitudes() {
-        List<SolicitudInterconsultaEntity> solicitudes = solicitudInterconsultaRepositoryJPA.findAll();
-        return solicitudes.stream()
-                         .map(solicitud -> new SolicitudInterconsultaDto().convertirSolicitudInterconsultaEntityASolicitudInterconsultaDto(solicitud))
-                         .toList();
+    public Page<SolicitudInterconsultaDto> obtenerTodasSolicitudes(String fechaInicio, String fechaFin, String ciPaciente, String nombrePaciente, String nombreMedico, String nombreEspecialidad, String diagnosticoPresuntivo, Integer page, Integer size) {
+        Pageable pageable = Pageable.unpaged();
+        if(page!=null && size!=null){
+            pageable = PageRequest.of(page, size);
+        }         
+        Specification<SolicitudInterconsultaEntity> spec = Specification.where(SolicitudesInterconsultaSpecification.obtenerSolicitudesIPorParametros(convertirTiposDatosService.convertirStringADate(fechaInicio),convertirTiposDatosService.convertirStringADate(fechaFin),ciPaciente,nombrePaciente,nombreMedico,nombreEspecialidad,diagnosticoPresuntivo));
+        Page<SolicitudInterconsultaEntity> solicitudesEntitiesPage=solicitudInterconsultaRepositoryJPA.findAll(spec,pageable);
+
+        return solicitudesEntitiesPage.map(SolicitudInterconsultaDto::convertirSolicitudInterconsultaEntityASolicitudInterconsultaDto);
     }
 
     public SolicitudInterconsultaDto obtenerSolicitudPorId(Integer id) {
-        SolicitudInterconsultaEntity solicitudEntity = solicitudInterconsultaRepositoryJPA.findById(id)
+        SolicitudInterconsultaEntity solicitudEntity = solicitudInterconsultaRepositoryJPA.findByIdSolicitudInterconsultaAndDeletedAtIsNull(id)
             .orElseThrow(() -> new RuntimeException("Solicitud de interconsulta no encontrada"));
         return new SolicitudInterconsultaDto().convertirSolicitudInterconsultaEntityASolicitudInterconsultaDto(solicitudEntity);
     }
 
     public SolicitudInterconsultaDto actualizarSolicitud(Integer id, SolicitudInterconsultaDto solicitudDto) {
-        SolicitudInterconsultaEntity solicitudEntity = solicitudInterconsultaRepositoryJPA.findById(id)
+        SolicitudInterconsultaEntity solicitudEntity = solicitudInterconsultaRepositoryJPA.findByIdSolicitudInterconsultaAndDeletedAtIsNull(id)
             .orElseThrow(() -> new RuntimeException("Solicitud de interconsulta no encontrada"));
         
         UsuarioEntity medicoEntity = usuariosRepositoryJPA.findById(solicitudDto.getIdMedico())
@@ -80,11 +94,15 @@ public class SolicitudesInterconsultaService {
         return new SolicitudInterconsultaDto().convertirSolicitudInterconsultaEntityASolicitudInterconsultaDto(solicitudEntity);
     }
 
-    public List<SolicitudInterconsultaDto> obtenerTodasSolicitudesInterconsultaDePaciente(int idPaciente) {
-        List<SolicitudInterconsultaEntity> solicitudes = solicitudInterconsultaRepositoryJPA.obtenerSolicitudesInterconsultaPaciente(idPaciente);
-        return solicitudes.stream()
-                        .map(solicitud -> new SolicitudInterconsultaDto().convertirSolicitudInterconsultaEntityASolicitudInterconsultaDto(solicitud))
-                        .toList();
+    public Page<SolicitudInterconsultaDto> obtenerTodasSolicitudesInterconsultaDePaciente(int idPaciente, String fechaInicio, String fechaFin, String nombreMedico, String nombreEspecialidad, String diagnosticoPresuntivo, Integer page, Integer size) {
+        Pageable pageable = Pageable.unpaged();
+        if(page!=null && size!=null){
+            pageable = PageRequest.of(page, size);
+        }         
+        Specification<SolicitudInterconsultaEntity> spec = Specification.where(SolicitudesInterconsultaSpecification.obtenerSolicitudesIDePacientePorParametros(idPaciente,convertirTiposDatosService.convertirStringADate(fechaInicio),convertirTiposDatosService.convertirStringADate(fechaFin),nombreMedico,nombreEspecialidad,diagnosticoPresuntivo));
+        Page<SolicitudInterconsultaEntity> solicitudesEntitiesPage=solicitudInterconsultaRepositoryJPA.findAll(spec,pageable);
+
+        return solicitudesEntitiesPage.map(SolicitudInterconsultaDto::convertirSolicitudInterconsultaEntityASolicitudInterconsultaDto);
     }
 
     public byte[] obtenerPDFSolicitudInterconsulta(SolicitudInterconsultaDto solicitudInterconsultaDto) {
@@ -94,5 +112,13 @@ public class SolicitudesInterconsultaService {
             e.printStackTrace();
             throw new RuntimeException("Error al generar el PDF de la historia clinica.", e);
         }
+    }
+
+    public void delete(int id) {
+        SolicitudInterconsultaEntity solicitudEntity = solicitudInterconsultaRepositoryJPA.findByIdSolicitudInterconsultaAndDeletedAtIsNull(id)
+        .orElseThrow(() -> new RuntimeException("Solicitud de interconsulta no encontrada"));
+        
+        solicitudEntity.markAsDeleted();
+        solicitudInterconsultaRepositoryJPA.save(solicitudEntity);
     }
 }

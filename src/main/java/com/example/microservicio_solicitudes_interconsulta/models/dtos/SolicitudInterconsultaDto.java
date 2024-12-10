@@ -33,7 +33,7 @@ public class SolicitudInterconsultaDto {
     private String ciPropietario;
 
 
-    public SolicitudInterconsultaDto convertirSolicitudInterconsultaEntityASolicitudInterconsultaDto(SolicitudInterconsultaEntity solicitudInterconsultaEntity) {
+    public static SolicitudInterconsultaDto convertirSolicitudInterconsultaEntityASolicitudInterconsultaDto(SolicitudInterconsultaEntity solicitudInterconsultaEntity) {
         SolicitudInterconsultaDto solicitudInterconsultaDto = new SolicitudInterconsultaDto();
         solicitudInterconsultaDto.setId(solicitudInterconsultaEntity.getIdSolicitudInterconsulta());
         solicitudInterconsultaDto.setHospitalInterconsultado(solicitudInterconsultaEntity.getHospitalInterconsultado());

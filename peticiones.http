@@ -1,0 +1,14 @@
+
+###
+GET http://localhost:9006/api/microservicio-solicitudes-interconsulta/solicitudes-interconsulta/pdf
+Content-Type: application/json
+
+{
+  "hospitalInterconsultado": "hospitalInterconsultado",
+  "unidadInterconsultada": "unidadInterconsultada",
+  "queDeseaSaber": "queDeseaSaber",
+  "sintomatologia": "sintomatologia",
+  "tratamiento": "tratamiento",
+  "idHistoriaClinica": 1,
+  "idMedico": 8490543
+}
