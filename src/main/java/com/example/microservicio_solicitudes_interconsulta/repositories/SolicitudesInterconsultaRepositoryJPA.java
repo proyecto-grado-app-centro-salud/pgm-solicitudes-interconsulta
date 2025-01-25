@@ -1,10 +1,12 @@
 package com.example.microservicio_solicitudes_interconsulta.repositories;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -17,4 +19,8 @@ public interface SolicitudesInterconsultaRepositoryJPA extends JpaRepository<Sol
     + "WHERE p.idUsuario = :idPaciente")
     List<SolicitudInterconsultaEntity> obtenerSolicitudesInterconsultaPaciente(@Param("idPaciente") int idPaciente);
     Optional<SolicitudInterconsultaEntity> findByIdSolicitudInterconsultaAndDeletedAtIsNull(int idSolicitudInterconsulta);
+
+    @Modifying
+    @Query(value = "UPDATE solicitudes_interconsulta SET deleted_at = ?2 WHERE id_historia_clinica = ?1", nativeQuery = true)
+    void markAsDeletedAllSolicitudesInterconsultasFromHistoriaClinica(int idHistoriaClinica, Date date);
 }

@@ -118,4 +118,14 @@ public class SolicitudInterconsultaController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @DeleteMapping(value = "/historia-clinica/{id}")
+    public ResponseEntity<Void> deleteSolicitudesInterconsultasDeHistoriaClinica(@PathVariable int id) {
+        try{
+            solicitudesInterconsultaService.deleteSolicitudesInterconsultasDeHistoriaClinica(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

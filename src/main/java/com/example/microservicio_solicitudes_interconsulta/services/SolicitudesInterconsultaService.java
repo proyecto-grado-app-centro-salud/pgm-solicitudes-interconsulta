@@ -1,6 +1,7 @@
 package com.example.microservicio_solicitudes_interconsulta.services;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,8 @@ import com.example.microservicio_solicitudes_interconsulta.repositories.Historia
 import com.example.microservicio_solicitudes_interconsulta.repositories.SolicitudesInterconsultaRepositoryJPA;
 import com.example.microservicio_solicitudes_interconsulta.repositories.UsuariosRepositoryJPA;
 import com.example.microservicio_solicitudes_interconsulta.util.SolicitudesInterconsultaSpecification;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class SolicitudesInterconsultaService {
@@ -38,9 +41,9 @@ public class SolicitudesInterconsultaService {
     @Autowired
     private ConvertirTiposDatosService convertirTiposDatosService;
     public SolicitudInterconsultaDto registrarSolicitud(SolicitudInterconsultaDto solicitudDto) {
-        UsuarioEntity medicoEntity = usuariosRepositoryJPA.findById(solicitudDto.getIdMedico())
+        UsuarioEntity medicoEntity = usuariosRepositoryJPA.findByIdUsuarioAndDeletedAtIsNull(solicitudDto.getIdMedico())
             .orElseThrow(() -> new RuntimeException("Médico no encontrado"));
-        HistoriaClinicaEntity historiaClinicaEntity = historiaClinicaRepositoryJPA.findById(solicitudDto.getIdHistoriaClinica())
+        HistoriaClinicaEntity historiaClinicaEntity = historiaClinicaRepositoryJPA.findByIdHistoriaClinicaAndDeletedAtIsNull(solicitudDto.getIdHistoriaClinica())
             .orElseThrow(() -> new RuntimeException("Historia clínica no encontrada"));
 
         SolicitudInterconsultaEntity solicitudEntity = new SolicitudInterconsultaEntity();
@@ -77,9 +80,9 @@ public class SolicitudesInterconsultaService {
         SolicitudInterconsultaEntity solicitudEntity = solicitudInterconsultaRepositoryJPA.findByIdSolicitudInterconsultaAndDeletedAtIsNull(id)
             .orElseThrow(() -> new RuntimeException("Solicitud de interconsulta no encontrada"));
         
-        UsuarioEntity medicoEntity = usuariosRepositoryJPA.findById(solicitudDto.getIdMedico())
+        UsuarioEntity medicoEntity = usuariosRepositoryJPA.findByIdUsuarioAndDeletedAtIsNull(solicitudDto.getIdMedico())
             .orElseThrow(() -> new RuntimeException("Médico no encontrado"));
-        HistoriaClinicaEntity historiaClinicaEntity = historiaClinicaRepositoryJPA.findById(solicitudDto.getIdHistoriaClinica())
+        HistoriaClinicaEntity historiaClinicaEntity = historiaClinicaRepositoryJPA.findByIdHistoriaClinicaAndDeletedAtIsNull(solicitudDto.getIdHistoriaClinica())
             .orElseThrow(() -> new RuntimeException("Historia clínica no encontrada"));
 
         solicitudEntity.setHistoriaClinica(historiaClinicaEntity);
@@ -120,5 +123,10 @@ public class SolicitudesInterconsultaService {
         
         solicitudEntity.markAsDeleted();
         solicitudInterconsultaRepositoryJPA.save(solicitudEntity);
+    }
+
+    @Transactional
+    public void deleteSolicitudesInterconsultasDeHistoriaClinica(int idHistoriaClinica) {
+        solicitudInterconsultaRepositoryJPA.markAsDeletedAllSolicitudesInterconsultasFromHistoriaClinica(idHistoriaClinica,new Date());
     }
 }
