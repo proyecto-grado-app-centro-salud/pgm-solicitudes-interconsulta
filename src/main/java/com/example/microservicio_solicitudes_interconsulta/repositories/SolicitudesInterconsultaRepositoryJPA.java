@@ -17,10 +17,10 @@ public interface SolicitudesInterconsultaRepositoryJPA extends JpaRepository<Sol
     + "JOIN si.historiaClinica hc "
     + "JOIN hc.paciente p "
     + "WHERE p.idUsuario = :idPaciente")
-    List<SolicitudInterconsultaEntity> obtenerSolicitudesInterconsultaPaciente(@Param("idPaciente") int idPaciente);
+    List<SolicitudInterconsultaEntity> obtenerSolicitudesInterconsultaPaciente(@Param("idPaciente") String idPaciente);
     Optional<SolicitudInterconsultaEntity> findByIdSolicitudInterconsultaAndDeletedAtIsNull(int idSolicitudInterconsulta);
 
     @Modifying
-    @Query(value = "UPDATE solicitudes_interconsulta SET deleted_at = ?2 WHERE id_historia_clinica = ?1", nativeQuery = true)
+    @Query(value = "UPDATE solicitudes_interconsulta SET deleted_at = ?2 WHERE id_historia_clinica = ?1 AND deleted_at IS NULL", nativeQuery = true)
     void markAsDeletedAllSolicitudesInterconsultasFromHistoriaClinica(int idHistoriaClinica, Date date);
 }

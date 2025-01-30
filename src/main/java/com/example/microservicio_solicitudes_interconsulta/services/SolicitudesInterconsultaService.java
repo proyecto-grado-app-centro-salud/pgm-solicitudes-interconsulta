@@ -97,7 +97,7 @@ public class SolicitudesInterconsultaService {
         return new SolicitudInterconsultaDto().convertirSolicitudInterconsultaEntityASolicitudInterconsultaDto(solicitudEntity);
     }
 
-    public Page<SolicitudInterconsultaDto> obtenerTodasSolicitudesInterconsultaDePaciente(int idPaciente, String fechaInicio, String fechaFin, String nombreMedico, String nombreEspecialidad, String diagnosticoPresuntivo, Integer page, Integer size) {
+    public Page<SolicitudInterconsultaDto> obtenerTodasSolicitudesInterconsultaDePaciente(String idPaciente, String fechaInicio, String fechaFin, String nombreMedico, String nombreEspecialidad, String diagnosticoPresuntivo, Integer page, Integer size) {
         Pageable pageable = Pageable.unpaged();
         if(page!=null && size!=null){
             pageable = PageRequest.of(page, size);

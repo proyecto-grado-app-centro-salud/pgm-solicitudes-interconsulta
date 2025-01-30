@@ -26,9 +26,9 @@ public class SolicitudInterconsultaDto {
     private String diagnosticoPresuntivo;
     private Integer idEspecialidad;
     private String nombreEspecialidad;
-    private Integer idMedico;
+    private String idMedico;
     private String nombreMedico;
-    private Integer idPaciente;
+    private String idPaciente;
     private String pacientePropietario;
     private String ciPropietario;
 

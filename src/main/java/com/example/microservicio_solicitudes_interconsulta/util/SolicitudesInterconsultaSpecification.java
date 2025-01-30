@@ -64,7 +64,7 @@ public class SolicitudesInterconsultaSpecification {
             throw new RuntimeException("Error obtener notas evo por parametros");
         }
     }
-    public static Specification obtenerSolicitudesIDePacientePorParametros(int idPaciente,Date minDate, Date maxDate,
+    public static Specification obtenerSolicitudesIDePacientePorParametros(String idPaciente,Date minDate, Date maxDate,
     String nombreMedico, String nombreEspecialidad,
     String diagnosticoPresuntivo) {
   try {
